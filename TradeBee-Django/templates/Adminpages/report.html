@@ -1,0 +1,490 @@
+{#<!DOCTYPE html>#}
+{#<html lang="en">#}
+{#<head>#}
+{#  <meta charset="UTF-8">#}
+{#  <title>View Content</title>#}
+{#  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">#}
+{#  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">#}
+{#  <style>#}
+{#    .img-thumbnail {#}
+{#      width: 50px;#}
+{#      height: 50px;#}
+{#    }#}
+{#    .filter-box {#}
+{#      margin-bottom: 20px;#}
+{#    }#}
+{#  </style>#}
+{#</head>#}
+{#<body>#}
+{#{% extends 'Adminpages/aindex.html' %}#}
+{#{% block body %}#}
+{#  <div class="container mt-5">#}
+{#    <h2 class="mb-4">View Contents</h2>#}
+{##}
+{#    <!-- Date Filter Inputs -->#}
+{#  <form method="post" action="/myapp/report/">#}
+{#      {% csrf_token %}#}
+{#    <div class="row filter-box">#}
+{#      <div class="col-md-4">#}
+{#        <label>From Date:</label>#}
+{#        <input type="date" id="minDate" name="fdate" class="form-control">#}
+{#      </div>#}
+{#      <div class="col-md-4">#}
+{#        <label>To Date:</label>#}
+{#        <input type="date" id="maxDate" name="tdate" class="form-control">#}
+{#      </div>#}
+{#        <div class="col-md-4">#}
+{#<label> </label>#}
+{#        <input type="submit" class="btn btn-success mt-4">#}
+{#      </div>#}
+{#    </div>#}
+{#    </form>#}
+{##}
+{##}
+{#  <P>Complaint {{ ccount  }}</P>#}
+{#  <P>Customer {{ customercount  }}</P>#}
+{#  <P>Notification {{ noticount  }}</P>#}
+{#  <P>News {{ newscount  }}</P>#}
+{#  <P>Content {{ contentcount  }}</P>#}
+{#  <P> Video{{ Videocount  }}</P>#}
+{##}
+{##}
+{##}
+{##}
+{##}
+{##}
+{#  {% for i in messages %}#}
+{#  {{ i }}#}
+{#  {% endfor %}#}
+{#  </div>#}
+{#{% endblock %}#}
+{#  <!-- Scripts -->#}
+{#  <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>#}
+{#  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>#}
+{#  <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>#}
+{##}
+{#  <script>#}
+{#    // Custom filtering function for date range#}
+{#    $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {#}
+{#      let min = $('#minDate').val();#}
+{#      let max = $('#maxDate').val();#}
+{#      let dob = data[3]; // Index of DOB column#}
+{##}
+{#      if (!min && !max) return true;#}
+{##}
+{#      const date = new Date(dob);#}
+{#      const minDate = min ? new Date(min) : null;#}
+{#      const maxDate = max ? new Date(max) : null;#}
+{##}
+{#      if (#}
+{#        (!minDate || date >= minDate) &&#}
+{#        (!maxDate || date <= maxDate)#}
+{#      ) {#}
+{#        return true;#}
+{#      }#}
+{#      return false;#}
+{#    });#}
+{##}
+{#    $(document).ready(function () {#}
+{#      const table = $('#registrationTable').DataTable();#}
+{##}
+{#      // Event listeners for date range filtering#}
+{#      $('#minDate, #maxDate').on('change', function () {#}
+{#        table.draw();#}
+{#      });#}
+{#    });#}
+{#  </script>#}
+{#</body>#}
+{#</html>#}
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Admin Dashboard | Content Overview</title>
+  <!-- Bootstrap 5 + Icons + Fonts -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome 6 (free icons) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <!-- Google Fonts: Inter & Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  <!-- DataTables CSS -->
+  <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+  <!-- Chart.js CDN for modern dashboard charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    * {
+      font-family: 'Inter', sans-serif;
+    }
+    body {
+      background: #f4f7fc;
+      overflow-x: hidden;
+    }
+    /* custom card styles */
+    .stat-card {
+      border: none;
+      border-radius: 1.5rem;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      background: white;
+      overflow: hidden;
+    }
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 25px -12px rgba(0,0,0,0.1);
+    }
+    .stat-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 28px;
+      color: white;
+    }
+    .bg-soft-primary { background: #eef2ff; color: #4f46e5; }
+    .bg-soft-success { background: #e0f2e9; color: #2b7e3a; }
+    .bg-soft-warning { background: #fff3e0; color: #d97706; }
+    .bg-soft-info { background: #e0f2fe; color: #0e7c9e; }
+    .bg-soft-danger { background: #ffe4e2; color: #c2412c; }
+    .bg-soft-purple { background: #f3e8ff; color: #8b5cf6; }
+    .stat-value {
+      font-size: 2.1rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: #1e293b;
+    }
+    .stat-label {
+      font-size: 0.85rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #5b6e8c;
+    }
+    .dashboard-header {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1rem 1.8rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+      margin-bottom: 1.8rem;
+    }
+    .filter-card {
+      background: white;
+      border-radius: 1.25rem;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      margin-bottom: 2rem;
+      padding: 0.8rem 1.2rem;
+    }
+    .btn-modern {
+      border-radius: 40px;
+      padding: 0.5rem 1.5rem;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+    .table-wrapper {
+      background: white;
+      border-radius: 1.25rem;
+      padding: 0.5rem 0.2rem 0.5rem 0.2rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.02);
+    }
+    .dataTables_wrapper .dataTables_length,
+    .dataTables_wrapper .dataTables_filter {
+      margin-bottom: 1rem;
+    }
+    .badge-notify {
+      background: #eef2ff;
+      color: #2563eb;
+      font-weight: 500;
+    }
+    h2, h3 {
+      font-weight: 700;
+      letter-spacing: -0.3px;
+    }
+    .chart-container {
+      background: white;
+      border-radius: 1.25rem;
+      padding: 1rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+      height: 100%;
+    }
+    .greeting-text {
+      font-size: 0.9rem;
+      color: #4b5563;
+    }
+    .content-summary {
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    footer {
+      font-size: 0.8rem;
+      text-align: center;
+      margin-top: 2.5rem;
+      color: #6c86a3;
+    }
+    @media (max-width: 768px) {
+      .stat-value { font-size: 1.6rem; }
+      .stat-icon { width: 44px; height: 44px; font-size: 22px; }
+    }
+  </style>
+</head>
+<body>
+<!-- We extend from base template pattern, but to make this standalone dashboard we simulate block body -->
+<!-- Since the original uses 'extends' and 'block body', we keep that structure but for design demo we render full -->
+<!-- Actually we respect Django templating: we embed inside body but keep extends for real usage -->
+{% extends 'Adminpages/aindex.html' %}
+{% block body %}
+<div class="container-fluid px-4 py-3">
+  <!-- Dashboard Header with greeting and stats overview -->
+  <div class="dashboard-header d-flex flex-wrap justify-content-between align-items-center">
+    <div>
+      <h2 class="mb-0" style="font-size: 1.8rem;"><i class="fas fa-chalkboard-user me-2 text-primary"></i>Content Analytics</h2>
+      <p class="greeting-text mt-1">Welcome back, Admin · Real-time content performance insights</p>
+    </div>
+    <div class="mt-2 mt-sm-0">
+      <span class="badge bg-light text-dark p-2 px-3 rounded-pill"><i class="far fa-calendar-alt me-1"></i> {% now "F j, Y" %}</span>
+    </div>
+  </div>
+
+  <!-- Date Range Filter Form (improved design) -->
+  <div class="filter-card">
+    <form method="post" action="/myapp/report/" class="row g-3 align-items-end">
+      {% csrf_token %}
+
+    </form>
+  </div>
+
+  <!-- KPI Cards Row with dynamic counts (context passed from Django) -->
+  <div class="row g-4 mb-5">
+    <div class="col-xl-2 col-md-4 col-sm-6">
+      <div class="stat-card p-3 h-100 d-flex align-items-center">
+        <div class="stat-icon bg-soft-primary me-3"><i class="fas fa-flag-checkered"></i></div>
+        <div><div class="stat-value">{{ ccount|default:"0" }}</div><div class="stat-label">Complaints</div></div>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-sm-6">
+      <div class="stat-card p-3 h-100 d-flex align-items-center">
+        <div class="stat-icon bg-soft-success me-3"><i class="fas fa-users"></i></div>
+        <div><div class="stat-value">{{ customercount|default:"0" }}</div><div class="stat-label">Customers</div></div>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-sm-6">
+      <div class="stat-card p-3 h-100 d-flex align-items-center">
+        <div class="stat-icon bg-soft-warning me-3"><i class="fas fa-bell"></i></div>
+        <div><div class="stat-value">{{ noticount|default:"0" }}</div><div class="stat-label">Notifications</div></div>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-sm-6">
+      <div class="stat-card p-3 h-100 d-flex align-items-center">
+        <div class="stat-icon bg-soft-info me-3"><i class="fas fa-newspaper"></i></div>
+        <div><div class="stat-value">{{ newscount|default:"0" }}</div><div class="stat-label">News</div></div>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-sm-6">
+      <div class="stat-card p-3 h-100 d-flex align-items-center">
+        <div class="stat-icon bg-soft-danger me-3"><i class="fas fa-layer-group"></i></div>
+        <div><div class="stat-value">{{ contentcount|default:"0" }}</div><div class="stat-label">Contents</div></div>
+      </div>
+    </div>
+    <div class="col-xl-2 col-md-4 col-sm-6">
+      <div class="stat-card p-3 h-100 d-flex align-items-center">
+        <div class="stat-icon bg-soft-purple me-3"><i class="fas fa-video"></i></div>
+        <div><div class="stat-value">{{ Videocount|default:"0" }}</div><div class="stat-label">Videos</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row: Engagement trends & Content Distribution (enhanced visual) -->
+  <div class="row g-4 mb-5">
+    <div class="col-lg-7">
+      <div class="chart-container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0"><i class="fas fa-chart-simple me-2 text-primary"></i>Monthly Content Activity</h5>
+          <span class="badge badge-notify">Trends</span>
+        </div>
+        <canvas id="activityChart" style="max-height: 280px; width:100%"></canvas>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="chart-container">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="fw-bold mb-0"><i class="fas fa-chart-pie me-2 text-success"></i>Content Distribution</h5>
+          <span class="badge badge-notify">% Share</span>
+        </div>
+        <canvas id="distributionChart" style="max-height: 240px; width:100%"></canvas>
+        <div class="mt-3 small text-muted text-center">
+          Based on current database entries
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DataTable: Detailed Records (sample content table) -->
+
+
+  <!-- Message display from Django messages framework -->
+  {% if messages %}
+    <div class="mt-4">
+      {% for i in messages %}
+        <div class="alert alert-success alert-dismissible fade show rounded-4" role="alert">
+          <i class="fas fa-check-circle me-2"></i> {{ i }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+
+</div>
+
+<!-- Scripts: jQuery, Bootstrap, DataTables, Chart.js init -->
+<script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+
+<script>
+  // Date range filter for DataTable (based on DOB column - index 3)
+  $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+    let min = $('#minDate').val();
+    let max = $('#maxDate').val();
+    let dateStr = data[3]; // column Date (index 3)
+    if (!min && !max) return true;
+    const date = new Date(dateStr);
+    const minDate = min ? new Date(min) : null;
+    const maxDate = max ? new Date(max) : null;
+    if (
+      (!minDate || date >= minDate) &&
+      (!maxDate || date <= maxDate)
+    ) {
+      return true;
+    }
+    return false;
+  });
+
+  $(document).ready(function () {
+    // Initialize DataTable with modern styling
+    const table = $('#registrationTable').DataTable({
+      pageLength: 5,
+      lengthMenu: [[5, 10, 25], [5, 10, 25]],
+      language: { search: "Quick Filter:", info: "_TOTAL_ entries" },
+      order: [[3, 'desc']]  // sort by date descending
+    });
+
+    // Re-draw table when date range changes
+    $('#minDate, #maxDate').on('change', function () {
+      table.draw();
+    });
+  });
+
+  // ---------- CHARTS: show counts from Django context (or fallback demo) ----------
+  // Extract counts from template variables safely
+  let complaintsCount = parseInt("{{ ccount|default:'0' }}") || 0;
+  let customersCount = parseInt("{{ customercount|default:'0' }}") || 0;
+  let notificationsCount = parseInt("{{ noticount|default:'0' }}") || 0;
+  let newsCount = parseInt("{{ newscount|default:'0' }}") || 0;
+  let contentCount = parseInt("{{ contentcount|default:'0' }}") || 0;
+  let videoCount = parseInt("{{ Videocount|default:'0' }}") || 0;
+
+  // Activity Chart (Bar) - simulate weekly or monthly trends based on counts, but we display generic "posts vs interactions"
+  // For better visual, we use a dynamic dataset using counts as indicator for month labels.
+  // Create 6 categories: Complaints, News, Notices, Content, Videos, Customers (Engagement)
+  const ctxBar = document.getElementById('activityChart').getContext('2d');
+  new Chart(ctxBar, {
+    type: 'bar',
+    data: {
+      labels: ['Complaints', 'News', 'Notification', 'Content', 'Videos', 'Customers'],
+      datasets: [{
+        label: 'Record Count',
+        data: [complaintsCount, newsCount, notificationsCount, contentCount, videoCount, customersCount],
+        backgroundColor: ['#4f46e5', '#f97316', '#10b981', '#0e7c9e', '#c2412c', '#8b5cf6'],
+        borderRadius: 12,
+        barPercentage: 0.65,
+        categoryPercentage: 0.8
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { position: 'top', labels: { font: { size: 12 } } },
+        tooltip: { backgroundColor: '#1e293b', titleColor: '#f1f5f9' }
+      },
+      scales: {
+        y: { beginAtZero: true, grid: { color: '#e9eef3' }, title: { display: true, text: 'Total Entries', font: { weight: '500' } } },
+        x: { ticks: { font: { weight: '500' } }, grid: { display: false } }
+      }
+    }
+  });
+
+  // Distribution Chart (Pie) - based on content related types: Content, Video, News, Notification (exclude customers/complaints for content focus)
+  let contentRelatedTotal = contentCount + videoCount + newsCount + notificationsCount;
+  let pieData = [contentCount, videoCount, newsCount, notificationsCount];
+  let pieLabels = ['Content', 'Video', 'News', 'Notification'];
+  // If total is zero, show dummy placeholder for better UI
+  if (contentRelatedTotal === 0) {
+    pieData = [1, 1, 1, 1];
+    pieLabels = ['Sample Content', 'Sample Video', 'Sample News', 'Sample Notice'];
+  }
+  const ctxPie = document.getElementById('distributionChart').getContext('2d');
+  new Chart(ctxPie, {
+    type: 'doughnut',
+    data: {
+      labels: pieLabels,
+      datasets: [{
+        data: pieData,
+        backgroundColor: ['#3b82f6', '#ef4444', '#f59e0b', '#8b5cf6'],
+        borderWidth: 0,
+        hoverOffset: 8,
+        cutout: '65%'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      plugins: {
+        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+        tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.raw} items (${Math.round(ctx.raw / (contentRelatedTotal || 1) * 100)}%)` } }
+      }
+    }
+  });
+</script>
+
+<!-- Additional small style enhancements for DataTable -->
+<style>
+  .dataTables_wrapper .dataTables_filter input {
+    border-radius: 40px;
+    padding: 0.4rem 1rem;
+    border: 1px solid #d1d9e8;
+  }
+  .dataTables_wrapper .dataTables_length select {
+    border-radius: 30px;
+    padding: 0.3rem 1rem;
+  }
+  .page-item.active .page-link {
+    background-color: #4f46e5;
+    border-color: #4f46e5;
+  }
+  .table > :not(caption) > * > * {
+    padding: 1rem 0.8rem;
+  }
+  .stat-card {
+    transition: all 0.2s;
+  }
+  .btn-outline-secondary:hover {
+    background: #eef2ff;
+    border-color: #cbd5e1;
+  }
+  .bg-soft-purple {
+    background: #f3e8ff;
+  }
+  .text-purple {
+    color: #8b5cf6;
+  }
+</style>
+{% endblock %}
+</body>
+</html>

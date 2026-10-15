@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Videos </title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+{% extends 'Adminpages/aindex.html' %}
+{% block body %}
+  <div class="container mt-5">
+    <h4 class="mb-4">Edit Content</h4>
+    <form method="post" action="/myapp/edit_content_post/" enctype="multipart/form-data">
+
+    {% csrf_token %}
+      <!-- Complaint Text -->
+      <div class="mb-3">
+          <input name="id" value="{{  data.id }}" type="hidden">
+        <label for="photo" class="form-label">Title </label>
+        <input name="title" type="text" class="form-control" name="title" value="{{ data.title }}">
+      </div>
+
+      <div class="mb-3">
+          <select name="type" class="form-control">
+              <option value="video">Video</option>
+              <option value="article">Article</option>
+          </select>
+      </div>
+          <!-- Optional File Upload -->
+      <div class="mb-3">
+          <input name="id" value="{{  data.id }}" type="hidden">
+        <label for="photo" class="form-label">Video </label>
+          {%  if data.type == "video" %}<video width="100" height="60" controls>
+    <source src="{{ data.video }}" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>{% else %}<a href="{{ data.video }}">View Pdf</a>{% endif %}
+        <input name="video" type="file" class="form-control" name="'video" value="{{ data.video }}" >
+      </div>
+{% endblock %}
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-primary">Add</button>
+    </form>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
